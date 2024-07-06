@@ -1,0 +1,31 @@
+`timescale 1ns / 1ps
+
+
+module LFSR(data_out, complete, reset, clock);
+   input reset;
+   input clock;
+   output [0:2] data_out;
+   output reg  complete; 
+   reg [0:2] lfsr_reg;		
+   reg [2:0] counter;
+
+   always@(posedge clock or posedge reset) begin
+      if(reset == 1) begin
+         lfsr_reg <= 9'b001;   
+         counter <= 3'b000;  
+      end
+      else begin
+         lfsr_reg[0] <= lfsr_reg[2];
+         lfsr_reg[1] <= lfsr_reg[0] ^ lfsr_reg[2];
+         lfsr_reg[2] <= lfsr_reg[1];
+         counter = counter + 1;
+         if(counter <= 3'b110) begin 
+            complete = 0;
+         end
+         else begin
+            complete = 1; 
+         end
+      end
+   end
+   assign data_out = lfsr_reg;  
+endmodule
